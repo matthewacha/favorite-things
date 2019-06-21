@@ -1,0 +1,13 @@
+{
+"firstName": "Matthew",
+"lastName": "Opio Wacha",
+"funFact": "I enjoying solving problems, I embrace change since it is the only way I can figure out my true abilities.",
+"hobbies": [ "coding", "rugby", "psycho-analysis", "mentoring"],
+"codingExperience": "2 years",
+"languages": ["python", "javascript", "html", "scss", "css"],
+"frameworks": ["Django", "Flask", "React", "react-native", "Vue"],
+"age": 28,
+"linkedIn": "https://www.linkedin.com/in/matthewacha/",
+"github": "https://github.com/matthewacha/",
+"email": "matthewacha@gmail.com"
+}
