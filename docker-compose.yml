@@ -5,6 +5,7 @@ services:
     image: postgres
   web:
     build: .
+    image: favorite-things-back:latest
     command: python3 /code/api/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code

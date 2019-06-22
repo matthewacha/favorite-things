@@ -1,4 +1,9 @@
 Django==2.0.3
+django-auditlog==0.4.5
+django-jsonfield==1.2.0
 djangorestframework==3.9.4
+pep8==1.7.1
+psycopg2-binary==2.8.3
+python-dateutil==2.6.0
 pytz==2019.1
-psycopg2>=2.7,<3.0
+six==1.12.0

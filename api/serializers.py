@@ -8,8 +8,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('url', 'username', 'email', 'groups')
 
+
 class FavoriteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Favorite
         fields = ('url', 'name', 'description', 'ranking', 'Metadata',
-        'category', 'created_at', 'modified_date', 'audit_log')
+                  'category', 'created_at', 'modified_date', 'audit_log')
+
