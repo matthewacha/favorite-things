@@ -77,13 +77,22 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+HOST = os.getenv('DB_HOST', 'localhost')
+PORT = os.getenv('PORT', 5432)
+PASSWORD = os.getenv('PASSWORD', 'password')
+
 DATABASES = {
+    'df': {},
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
+        'HOST': HOST,
+        'PASSWORD': PASSWORD,
+        'PORT': PORT,
+        # 'TEST': {
+        #     'NAME': 'testfavorite'
+        # }
     }
 }
 
