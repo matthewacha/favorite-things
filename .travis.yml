@@ -18,10 +18,14 @@ before_install:
   - docker login --username $HEROKU_USERNAME --password $HEROKU_API_KEY registry.heroku.com
 install:
   # install deps
-  # - yarn install
+  - pip3 install -r requirements.txt
+  - pip3 install coverage
+  - pip3 install coveralls
 script:
-  #- yarn test
-  #- yarn build
+  - python3 manage.py migrate
+  - coverage run --source='.' ./manage.py test
+  # Code coverage
+  - coverage report
   # build docker images
   - docker image build -t $HEROKU_APP_NAME .
   - docker images
@@ -33,9 +37,15 @@ script:
   - docker push registry.heroku.com/$HEROKU_APP_NAME/web
   - docker push $DOCKER_USERNAME/$HEROKU_APP_NAME:latest
   - heroku stack:set container -a $HEROKU_APP_NAME
+after_scripts:
+  - coveralls
 deploy:
   provider: script
   script:
     # run container in heroku
     heroku container:release web -a $HEROKU_APP_NAME
-  branch: master
+  branch:
+    - master
+    - develop
+addons:
+  postgresql: "9.6"

@@ -3,10 +3,14 @@ version: '3'
 services:
   db:
     image: postgres
+    ports:
+      - "6432:5432"
   web:
     build: .
     image: favorite-things-back:latest
-    command: python3 /code/api/manage.py runserver 0.0.0.0:8000
+    stdin_open: true
+    tty: true
+    command: python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
