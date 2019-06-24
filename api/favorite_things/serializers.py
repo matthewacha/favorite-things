@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .models import Favorite
+from api.favorite_things.models import Favorite
 from rest_framework import serializers
 from rest_framework.response import Response
 

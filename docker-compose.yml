@@ -3,14 +3,18 @@ version: '3'
 services:
   db:
     image: postgres
+    environment:
+      DATABASE_URL: $DATABASE_URL
+      DB: $DB
     ports:
-      - "6432:5432"
+      - '7432:7432'
   web:
     build: .
     image: favorite-things-back:latest
     stdin_open: true
     tty: true
-    command: python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py migrate
+    command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     ports:

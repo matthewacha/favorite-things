@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'favorite_things',
-    'auditlog'
+    'api.favorite_things',
+    'auditlog',
+    'api.users'
 ]
 
 MIDDLEWARE = [
@@ -78,24 +79,27 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 HOST = os.getenv('DB_HOST', 'localhost')
-PORT = os.getenv('PORT', 5432)
+URL = os.getenv('DB_URL', 'postgresql://postgres:password@localhost:5434/postgres')
+PORT = os.getenv('PORT', 5433)
 PASSWORD = os.getenv('PASSWORD', 'password')
 
-DATABASES = {
-    'df': {},
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': HOST,
-        'PASSWORD': PASSWORD,
-        'PORT': PORT,
-        # 'TEST': {
-        #     'NAME': 'testfavorite'
-        # }
+if os.environ.get('DB') == 'postgres':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'URL': URL,
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'HOST': HOST,
+            'PASSWORD': PASSWORD,
+            'PORT': 5432,
+        }
     }
-}
 
+if os.environ.get('DB') == 'heroku':
+    DATABASES = {
+        'default': dj_database_url.config(default=config('DATABASE_URL'))  # noqa E405
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

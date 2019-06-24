@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 from .models import Favorite
-from .serializers import FavoriteSerializer
+from api.users.models import CustomUser
+from api.favorite_things.serializers import FavoriteSerializer
 
 
 class BaseViewTest(APITestCase, APIClient):
@@ -34,17 +35,14 @@ class BaseViewTest(APITestCase, APIClient):
             }
         ]
 
-        user = User.objects.create_user(username='tesubd0lo0dj30e',
-                                        password='password')
-        user.firstname = 'james'
+        user = CustomUser.objects.create(name='tesubd0lo0dj30e')
         user.save()
-
         for fav in favorites:
             self.create_favorite(user, fav['title'], fav['ranking'],
                                  fav['category'])
 
     def tearDown(self):
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
         favorites = Favorite.objects.filter(owner=user.id)
         for fav in favorites:
             fav.delete()
@@ -57,11 +55,11 @@ class GetFavoriteThings(BaseViewTest):
         This tests that all favorites were created
         """
 
-        user1 = User.objects.create_user(username='tesubd0lo0e',
-                                         password='password')
+        user1 = CustomUser.objects.create(name='tesubd0lo0e')
+        user1.save()
         self.create_favorite(user1, 'title', 10, 'people')
 
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
 
         url = '/v1/favorite/?owner_id={}'.format(user.id)
         response = APIClient().get(url)
@@ -75,7 +73,7 @@ class GetFavoriteThings(BaseViewTest):
         """
         This tests that one favorite thing is returned
         """
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
 
         favorite = Favorite.objects.filter(owner=user.id).first()
         url = '/v1/favorite/{}/?owner_id={}'.format(favorite.id, user.id)
@@ -95,7 +93,7 @@ class PostFavoriteThings(BaseViewTest):
         This method tests that a registered user can post a favorite thing
         """
 
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
         url = '/v1/favorite/'
 
         favorite_thing = {
@@ -117,7 +115,7 @@ class UpdateFavoriteThings(BaseViewTest):
         """
         This tests that a user only update their favorite things
         """
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
 
         favorite = Favorite.objects.filter(owner=user.id).first()
         get_url = '/v1/favorite/{}/?owner_id={}'.format(favorite.id, user.id)
