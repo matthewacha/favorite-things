@@ -1,3 +1,5 @@
 favenv/
 .vscode/
 *.pyc
+favorite_things/__pycache__
+api/__pycache__

@@ -16,11 +16,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ('owner', 'title', 'description', 'ranking', 'category',
                   'created_at', 'modified_at', 'owner', 'metadata', 'id')
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = FavoriteSerializer(instance=instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     def validate_ranking(self, ranking):
         if isinstance(ranking, int) and ranking > 0:
             return ranking

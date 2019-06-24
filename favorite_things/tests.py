@@ -104,8 +104,6 @@ class PostFavoriteThings(BaseViewTest):
             "description": "helping hand",
             "ranking": 7,
             "category": "pe",
-            "created_at": "2019-06-23T08:27:52.582478Z",
-            "modified_at": "2019-06-23T21:02:12.724828Z",
             "metadata": "\"{}\""
         }
 
