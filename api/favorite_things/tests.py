@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 from .models import Favorite
-from .serializers import FavoriteSerializer
+from api.users.models import CustomUser
+from api.favorite_things.serializers import FavoriteSerializer
 
 
 class BaseViewTest(APITestCase, APIClient):
@@ -11,7 +12,7 @@ class BaseViewTest(APITestCase, APIClient):
 
     @staticmethod
     def create_favorite(user, title='', ranking=0, category=''):
-        Favorite.objects.create(owner=user, title=title,
+        Favorite.objects.create(customuser=user, title=title,
                                 metadata="\"{}\"", ranking=ranking,
                                 category=category, description="helping hand")
 
@@ -34,18 +35,15 @@ class BaseViewTest(APITestCase, APIClient):
             }
         ]
 
-        user = User.objects.create_user(username='tesubd0lo0dj30e',
-                                        password='password')
-        user.firstname = 'james'
+        user = CustomUser.objects.create(name='tesubd0lo0dj30e')
         user.save()
-
         for fav in favorites:
             self.create_favorite(user, fav['title'], fav['ranking'],
                                  fav['category'])
 
     def tearDown(self):
-        user = User.objects.get(username='tesubd0lo0dj30e')
-        favorites = Favorite.objects.filter(owner=user.id)
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
+        favorites = Favorite.objects.filter(customuser=user.id)
         for fav in favorites:
             fav.delete()
 
@@ -57,16 +55,16 @@ class GetFavoriteThings(BaseViewTest):
         This tests that all favorites were created
         """
 
-        user1 = User.objects.create_user(username='tesubd0lo0e',
-                                         password='password')
+        user1 = CustomUser.objects.create(name='tesubd0lo0e')
+        user1.save()
         self.create_favorite(user1, 'title', 10, 'people')
 
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
 
-        url = '/v1/favorite/?owner_id={}'.format(user.id)
+        url = '/v1/favorite/?customuser_id={}'.format(user.id)
         response = APIClient().get(url)
 
-        expected = Favorite.objects.filter(owner=user)
+        expected = Favorite.objects.filter(customuser=user)
         serialized = FavoriteSerializer(expected, many=True)
 
         self.assertEqual(len(response.data), len(serialized.data))
@@ -75,10 +73,10 @@ class GetFavoriteThings(BaseViewTest):
         """
         This tests that one favorite thing is returned
         """
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
 
-        favorite = Favorite.objects.filter(owner=user.id).first()
-        url = '/v1/favorite/{}/?owner_id={}'.format(favorite.id, user.id)
+        favorite = Favorite.objects.filter(customuser=user.id).first()
+        url = '/v1/favorite/{}/?customuser_id={}'.format(favorite.id, user.id)
         response = APIClient().get(url)
 
         expected = Favorite.objects.get(pk=favorite.id)
@@ -95,11 +93,11 @@ class PostFavoriteThings(BaseViewTest):
         This method tests that a registered user can post a favorite thing
         """
 
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
         url = '/v1/favorite/'
 
         favorite_thing = {
-            "owner": user.id,
+            "customuser": user.id,
             "title": "main test is here",
             "description": "helping hand",
             "ranking": 7,
@@ -110,6 +108,29 @@ class PostFavoriteThings(BaseViewTest):
         response = APIClient().post(url, favorite_thing)
         self.assertEqual(response.status_code, 201)
 
+    def test_user_can_post_unique_favorite(self):
+        """
+        This method tests that a registered user can post a unique
+        favorite thing
+        """
+
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
+        url = '/v1/favorite/'
+
+        favorite_thing = {
+            "customuser": user.id,
+            "title": "main test is here",
+            "description": "helping hand",
+            "ranking": 7,
+            "category": "pe",
+            "metadata": "\"{}\""
+        }
+        APIClient().post(url, favorite_thing)
+        response = APIClient().post(url, favorite_thing)
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.data['message'],
+                         'A favorite item with that title already exists')
+
 
 class UpdateFavoriteThings(BaseViewTest):
 
@@ -117,18 +138,36 @@ class UpdateFavoriteThings(BaseViewTest):
         """
         This tests that a user only update their favorite things
         """
-        user = User.objects.get(username='tesubd0lo0dj30e')
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
 
-        favorite = Favorite.objects.filter(owner=user.id).first()
-        get_url = '/v1/favorite/{}/?owner_id={}'.format(favorite.id, user.id)
+        favorite = Favorite.objects.filter(customuser=user.id).first()
+        update_url = '/v1/favorite/{}/?customuser_id={}'.format(
+            favorite.id, user.id)
 
-        favorite_update = {'owner': 5,
+        favorite_update = {'customuser': user.id,
                            'title': 'mountain biking',
                            'description': 'helping hand',
                            'ranking': 2, 'category': 'pe',
                            'metadata': '"\\"{}\\""'}
-        update_response = APIClient().put(get_url, favorite_update)
+        update_response = APIClient().put(update_url, favorite_update)
 
         self.assertEqual(update_response.status_code, 200)
         self.assertEqual(update_response.data['title'],
                          favorite_update['title'])
+
+
+class DeleteFavoriteThings(BaseViewTest):
+
+    def test_delete_favorite_thing(self):
+        """
+        This tests that a user only deletes their favorite things
+        """
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
+
+        favorite = Favorite.objects.filter(customuser=user.id).first()
+        delete_url = '/v1/favorite/{}/?customuser_id={}'.format(
+            favorite.id, user.id)
+
+        delete_response = APIClient().delete(delete_url)
+
+        self.assertEqual(delete_response.status_code, 200)
