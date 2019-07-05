@@ -2,17 +2,23 @@ language: python
 python:
   - "3.6"
 install:
-  # install deps
+  # install dependencies
   - pip3 install -r requirements.txt
   - pip3 install coverage
   - pip3 install coveralls
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
+  #run migrations
   - python3 manage.py migrate
   - coverage run --source='.' ./manage.py test
   # Code coverage
   - coverage report
-after_scripts:
+after_success:
   - coveralls
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 deploy:
   provider: heroku
   api_key:

@@ -2,7 +2,7 @@
 Britecore-app
 
 
-[![Coverage Status](https://coveralls.io/repos/github/matthewacha/favorite-things/badge.svg?branch=master)](https://coveralls.io/github/matthewacha/favorite-things?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/matthewacha/favorite-things/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/matthewacha/favorite-things?branch=master)
 [![Build Status](https://travis-ci.org/matthewacha/favorite-things.svg?branch=master)](https://travis-ci.org/matthewacha/favorite-things)
 [![Maintainability](https://api.codeclimate.com/v1/badges/90ae425e8edb1b1cdb95/maintainability)](https://codeclimate.com/github/matthewacha/favorite-things/maintainability)
 
@@ -74,6 +74,14 @@ $ python3 manage.py test
 
 ```
 $ coverage run --source='.' ./manage.py test
+```
+
+#### run with docker
+
+```
+$ docker-compose build
+
+$docker-compose up
 ```
 ## Documentation on usage of the API
 Documentation for the usage of the API endpoints can be found at [http://127.0.0.1:8000/docs/](http://127.0.0.1:8000/docs/) when running a local server.

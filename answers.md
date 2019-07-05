@@ -9,10 +9,12 @@ I spent 4 days working on the backend and 5 on the front end.
  - I would increase the tests and coverage
  - I would add pagination for the favorite things ```GET``` endpoint
  - I would add authentication since right now anyone who uses a name thats already taken by another usere will be able to view the other person's data
+ - I would add pagination and extend filters to the backend as well
 
 #### On the front-end
  - I would add tests for some edge cases especially errors
  - I would improve data retrieval by making use of sockets in order to get realtime data. At the moment I make use of the `serverBus` to give the same effect in order to improve the user experience.
+ - I would add pagination for retrieved data
  - I would refactor the coomponets for example the form so that it is reusable in the application.
  - I also would finish with linting the code
  - To improve the platform I would add a `share feature` so that other users can follow other user's favorite things

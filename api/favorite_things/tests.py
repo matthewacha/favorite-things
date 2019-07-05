@@ -85,6 +85,23 @@ class GetFavoriteThings(BaseViewTest):
         self.assertEqual(response.data['favorite'], serialized.data)
         self.assertEqual(response.status_code, 200)
 
+    def test_get_throws_exception(self):
+        """
+        This tests that a user cannot get a
+        favorite thing that does not exist
+        """
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
+
+        favorite = Favorite.objects.filter(customuser=user.id).first()
+        url = '/v1/favorite/{}/?customuser_id={}'.format(109, user.id)
+        response = APIClient().get(url)
+
+        expected = Favorite.objects.get(pk=favorite.id)
+        serialized = FavoriteSerializer(expected, many=False)
+        message = response.data['message']
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(message, 'The resource does not exist')
+
 
 class PostFavoriteThings(BaseViewTest):
 
@@ -171,3 +188,20 @@ class DeleteFavoriteThings(BaseViewTest):
         delete_response = APIClient().delete(delete_url)
 
         self.assertEqual(delete_response.status_code, 200)
+
+    def test_delete_favorite_exception(self):
+        """
+        This tests that an exception is throen when trie to delete a favorite
+        thing that does not exist
+        """
+        user = CustomUser.objects.get(name='tesubd0lo0dj30e')
+
+        favorite = Favorite.objects.filter(customuser=user.id).first()
+        delete_url = '/v1/favorite/{}/?customuser_id={}'.format(
+            102, user.id)
+
+        delete_response = APIClient().delete(delete_url)
+
+        self.assertEqual(delete_response.status_code, 404)
+        self.assertEqual(delete_response.data['message'], 'The resource does not exist')
+
