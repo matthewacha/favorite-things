@@ -75,5 +75,13 @@ $ python3 manage.py test
 ```
 $ coverage run --source='.' ./manage.py test
 ```
+
+#### run with docker
+
+```
+$ docker-compose build
+
+$docker-compose up
+```
 ## Documentation on usage of the API
 Documentation for the usage of the API endpoints can be found at [http://127.0.0.1:8000/docs/](http://127.0.0.1:8000/docs/) when running a local server.
